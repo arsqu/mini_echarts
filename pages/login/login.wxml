@@ -1,0 +1,7 @@
+<view class="login">
+  <form class="formLogin" bindsubmit='login' bindreset="formReset">
+    <input class="mt-5 {{ user == true ? 'userError' : ''}}" name="user" type="text" maxlength="11" placeholder="用户名" />
+    <input class="mt-5 {{ pass == true ? 'userError' : ''}}" name="pass" password maxlength="50" placeholder="密码" />
+    <button class="loginBtn" form-type='submit'> 登录 </button>
+  </form>
+</view>

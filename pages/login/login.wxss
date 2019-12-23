@@ -1,0 +1,53 @@
+page {
+  background-color: #fff;
+  font-size: 35rpx;
+  height: 100%;
+}
+
+.mt-5 {
+  margin-top: 30rpx;
+}
+
+.login {
+  background: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576651959925&di=cbd70092ffd60ac316fe91ca8e2a1115&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F016c8e565bd50632f8759647a7eba1.png');
+  height: 100%;
+  width: 100%;
+}
+
+.formLogin {
+  top: 20%;
+  width: calc(100% - 60rpx);
+  padding: 80rpx 10rpx;
+  margin: 0 30rpx;
+  border-radius: 20rpx;
+  box-sizing: border-box;
+  position: absolute;
+  background: #fff;
+}
+
+input {
+  border: 1px solid #ddd;
+  line-height: 80rpx;
+  height: 80rpx;
+  width: 80%;
+  margin: 0 auto;
+  padding-left: 20rpx;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.login .loginBtn {
+  background-color: #1E659D;
+  color: #fff;
+  margin:40rpx auto 10rpx; 
+  width: 80%;
+  padding:15rpx 0;
+  display:block;
+  text-align: center;
+  cursor: pointer
+}
+
+.userError {
+  border-color: #b02923;
+}
