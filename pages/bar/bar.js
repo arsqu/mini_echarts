@@ -1,8 +1,13 @@
 import * as echarts from '../../ec-canvas/echarts';
+import config from '../../config.js'
+import chartOption from '../../chart/option.js'
+import chartOption1 from '../../chart/option1.js'
+import chartOption2 from '../../chart/option2.js'
 
 let chart = null;
 let chart1 = null;
 let chart2 = null;
+
 
 function request(url, cb) {
   wx.request({
@@ -20,20 +25,22 @@ function request(url, cb) {
 
 function loop(opt) {
   var newArr = [
-      [],
-      []
-    ],
-    tA = [],
-    total = 0;
+    [],
+    []
+  ]
   for (var k in opt) {
-    total += opt[k];
     newArr[0].push(k);
     newArr[1].push(opt[k]);
   }
-  newArr[0].forEach(res => {
-    tA.push(total);
-  })
-  return [newArr, tA];
+  return newArr;
+}
+
+function getTotal(data, len) {
+  var newArr = [];
+  for (var i = 0; i < len; i++) {
+    newArr.push(data);
+  }
+  return newArr;
 }
 
 function initChart(canvas, width, height) {
@@ -85,214 +92,39 @@ Page({
   },
   onReady() {
     setTimeout(() => {
-      this.getChart('http://localhost:8873/data/1.json');
-      this.getChart1('http://localhost:8873/data/2.json');
-      this.getChart2('http://localhost:8873/data/3.json');
+      console.log(config);
+      var chart = config.chart,
+        chart1 = config.chart1,
+        chart2 = config.chart2;
+      this.getChart(chart.data, chart.total);
+      this.getChart1(chart1.data, chart1.total);
+      this.getChart2(chart1.data, chart2.total);
     }, 100);
   },
-  getChart(url) {
-    request(url, res => {
+  createChart(detl, total, option, chart) {
+    var userName = wx.getStorageSync('userName');
+    detl += '?userName=' + userName;
+    request(detl, res => {
       if (res.statusCode == 200) {
         var data = res.data;
         data = loop(data);
-        var areas = data[0][0],
-          tgtVals = data[0][1],
-          compVals = data[1];
-        var option = {
-          color: ['#1da1f2', '#fa7070'],
-          title: {
-            text: '兴趣爱好', //主标题
-            x: 'left' //标题位置
-          }, //图表标题
-          tooltip: {
-            trigger: 'axis'
-          },
-          grid: {
-            x: '15%',
-            top: '20%'
-          },
-          calculable: true,
-          legend: {
-            data: ['活动', '总数'],
-            left: 'center',
-          },
-          xAxis: [{
-            type: 'category',
-            data: areas,
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            }
-          }],
-          yAxis: [{
-            type: 'value',
-            name: '活动数',
-            max: 15,
-            splitLine: { // 分隔线
-              show: false, // 默认显示，属性show控制显示与否
-            },
-            axisLine: {
-              show: true // 坐标轴是否显示
-            },
-            splitLine: {
-              show: true, //网格线开关
-            }
-          }],
-          series: [{
-              name: '活动',
-              type: 'bar',
-              data: tgtVals
-            },
-            {
-              name: '总数',
-              type: 'bar',
-              data: compVals
-            }
-          ]
-        }
-        chart.setOption(option);
+        option.xAxis[0].data = data[0];
+        option.series[0].data = data[1];
+        request(total, res => {
+          var v = getTotal(res.data.total, data[0].length);
+          option.series[1].data = v;
+          chart.setOption(option);
+        })
       }
     });
   },
-  getChart1(url) {
-    request(url, res => {
-      if (res.statusCode == 200) {
-        var data = res.data;
-        data = loop(data);
-        var areas = data[0][0],
-          tgtVals = data[0][1],
-          compVals = data[1];
-        var option = {
-          color: ['#1da1f2', '#fa7070'],
-          title: {
-            text: '饮食习惯',
-            x: 'left'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          grid: {
-            x: '15%'
-          },
-          calculable: true,
-          legend: {
-            data: ['习惯', '总数'],
-            left: 'center',
-          },
-          xAxis: [{
-            type: 'category',
-            data: areas,
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            }
-          }, ],
-          yAxis: [{
-            type: 'value',
-            name: '单位',
-            max: 15,
-            splitLine: { // 分隔线
-              show: false, // 默认显示，属性show控制显示与否
-            },
-            axisLine: {
-              show: true // 坐标轴是否显示
-            },
-            splitLine: {
-              show: true, //网格线开关
-            }
-          }],
-          series: [{
-              name: '习惯',
-              type: 'bar',
-              label: {
-                formatter: function() {
-
-                }
-              },
-              data: tgtVals
-            },
-            {
-              name: '总数',
-              type: 'bar',
-              data: compVals
-            }
-          ]
-        }
-        chart1.setOption(option);
-      }
-    });
+  getChart(detl, total) {
+    this.createChart(detl, total, chartOption, chart);
   },
-  getChart2(url) {
-    request(url, res => {
-      if (res.statusCode == 200) {
-        var data = res.data;
-        data = loop(data);
-        var areas = data[0][0],
-          tgtVals = data[0][1],
-          compVals = data[1];
-        var option = {
-          color: ['#1da1f2', '#fa7070'],
-          title: {
-            text: '作息时间',
-            x: 'left'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          grid: {
-            x: '15%'
-          },
-          calculable: true,
-          legend: {
-            data: ['目标', '完成情况'],
-            left: 'center',
-          },
-          xAxis: [{
-            type: 'category',
-            data: areas,
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0,
-              // formatter: function (value) {
-
-              //   return value.split("").join("\n");
-              // }  
-            }
-          }],
-          yAxis: [{
-            type: 'value',
-            name: '作息时间',
-            max: 24,
-            splitLine: { // 分隔线
-              show: false, // 默认显示，属性show控制显示与否
-            },
-            axisLine: {
-              show: true // 坐标轴是否显示
-            },
-            splitLine: {
-              show: true, //网格线开关
-            }
-          }],
-          series: [{
-              name: '目标',
-              type: 'bar',
-              data: tgtVals
-            },
-            {
-              name: '完成情况',
-              type: 'bar',
-              data: compVals
-            }
-          ]
-        }
-        chart2.setOption(option);
-      }
-    });
+  getChart1(detl, total) {
+    this.createChart(detl, total, chartOption1, chart1);
+  },
+  getChart2(detl, total) {
+    this.createChart(detl, total, chartOption2, chart2);
   }
 });

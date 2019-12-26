@@ -1,39 +1,32 @@
 // pages/login/login.js
+import config from '../../config.js'
 const app = getApp();
 Page({
   data: {
     user: false,
     pass: false
   },
-  onLoad(options) {
-    // 页面初始化 options为页面跳转所带来的参数
-  },
-  onReady() {
-    // 页面渲染完成
-  },
-  onShow() {
-    // 页面显示
-  },
-  onHide() {
-    // 页面隐藏
-  },
-  onUnload() {
-    // 页面关闭
-  },
+  onLoad(options) {},
+  onReady() {},
+  onShow() {},
+  onHide() {},
+  onUnload() {},
   toLogin(params) {
     wx.showToast({
       title: '登录中',
       icon: 'loading'
     });
     wx.request({
-      url: 'http://localhost:8873/userContro/selectOneUser',
+      url: config.login,
       method: 'POST',
       data: params,
       header: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       success: function(res) {
-        if(res){
+        if (res) {
+          wx.setStorageSync('isLogin', '1');
+          wx.setStorageSync('userName', params.userName);
           wx.navigateTo({
             url: '/pages/bar/bar'
           })
@@ -69,8 +62,6 @@ Page({
       // })
       return;
     }
-    //userName: admin
-    // passWord: admin123
     this.toLogin({
       userName: v.user,
       passWord: v.pass
